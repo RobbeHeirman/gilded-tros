@@ -1,0 +1,13 @@
+1) design choice items -> nothing has been said about extending it with a child class (Sorry for being that guy QA.)
+   will offload qualityUpdate responsibilities to the items themselves.
+    choice:
+        -> smart use of polymorphism + factory pattern?
+        -> inject a quality update function?
+    chosen:
+        -> inheritance and virtual update_quality so i can check my boundaries => use factory pattern.
+
+2) Write down what has to be tested.
+3) define additional function class skeletons.
+4) write tests and tests and some more tests.
+3) Write some code! (heavy breathing)
+4) profit?
