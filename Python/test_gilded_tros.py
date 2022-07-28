@@ -10,7 +10,7 @@ class GildedTrosTest(unittest.TestCase):
         items = [Item("foo", 0, 0)]
         gilded_tros = GildedTros(items)
         gilded_tros.update_quality()
-        self.assertEquals("fixme", items[0].name)
+        self.assertEquals("foo", items[0].name)
 
 
 # TODO: Item constructor test (Pre conditions).
