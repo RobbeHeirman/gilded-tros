@@ -13,12 +13,16 @@ class GildedTrosTest(unittest.TestCase):
         self.assertEquals("foo", items[0].name)
 
 
-# TODO: Item constructor test (Pre conditions).
+class ItemConstructorTest(unittest.TestCase):
+    pass
 # TODO: Item constructor happy day
 # TODO: Constructor boundary tests.
 # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
 # TODO: test raise ValueError legendary item != 80
 
+
+class UpdateQualityTest(unittest.TestCase):
+    pass
 # TODO: update_quality tests
 # TODO: Happy day scenario -> check end result after x loops for each kind of item
 # TODO: check invariants during update_quality function
