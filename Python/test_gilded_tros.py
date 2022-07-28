@@ -5,12 +5,11 @@ from gilded_tros import Item, GildedTros
 
 
 class GildedTrosTest(unittest.TestCase):
-    # TODO: Fix existing test. What part of the code does this test? Constructor or update quality?
     def test_foo(self):
         items = [Item("foo", 0, 0)]
         gilded_tros = GildedTros(items)
         gilded_tros.update_quality()
-        self.assertEquals("foo", items[0].name)
+        self.assertEqual("foo", items[0].name)
 
 
 class ItemConstructorTest(unittest.TestCase):
