@@ -49,7 +49,8 @@ class ItemConstructorTest(unittest.TestCase):
 
     def test_legendary_item_happy_day(self):
         for test_name in _LEGENDARY_ITEMS:
-            pass
+            item = item_factory(test_name, 0, constants.LEGENDARY_ITEM_QUALITY)
+            self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
     # TODO: Constructor boundary tests.
     # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY

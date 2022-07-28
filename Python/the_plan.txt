@@ -7,7 +7,10 @@
         -> inheritance and virtual update_quality so i can check my boundaries => use factory pattern.
 
 2) Write down what has to be tested.
+    -> DONE
+
 3) define additional function class skeletons.
+    -> DONE
 4) write tests and tests and some more tests.
 3) Write some code! (heavy breathing)
 4) profit?
