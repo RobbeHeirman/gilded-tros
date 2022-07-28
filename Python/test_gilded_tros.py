@@ -13,8 +13,19 @@ class GildedTrosTest(unittest.TestCase):
 
 
 class ItemConstructorTest(unittest.TestCase):
-    pass
-# TODO: Item constructor happy day
+
+    # TODO: Item constructor happy day
+    def test_item_happy_day(self):
+        pass
+
+    def test_good_wine_happy_day(self):
+        pass
+
+    def test_legendary_item_happy_day(self):
+        pass
+
+    def test_backstage_passes_happy_day(self):
+        pass
 # TODO: Constructor boundary tests.
 # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
 # TODO: test raise ValueError legendary item != 80
