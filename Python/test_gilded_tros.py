@@ -1,7 +1,32 @@
 # -*- coding: utf-8 -*-
 import unittest
-
 from gilded_tros import Item, GildedTros
+
+_ITEM_NAMES = (
+    "Ring of Cleansening Code",
+    "Elixir of the SOLID",
+    "A DRY glass of wine",
+    "A composite cocktail",
+    "Inherited drinking debt",
+    "Polymorphic beer"
+)
+_GOOD_WINE = (
+    "Good Wine",
+)
+_BACKSTAGE_PASSES = (
+    "Backstage passes for Re:Factor",
+    "Backstage passes for HAXX"
+)
+
+_LEGENDARY_ITEMS = (
+    "B-DAWG Keychain",
+)
+
+_SMELLY_ITEMS = (
+    "Duplicate Code",
+    "Long Methods",
+    "Ugly Variable Names"
+)
 
 
 class GildedTrosTest(unittest.TestCase):
@@ -16,8 +41,8 @@ class ItemConstructorTest(unittest.TestCase):
 
     # TODO: Item constructor happy day
     def test_item_happy_day(self):
-        pass
-
+        test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _LEGENDARY_ITEMS + _SMELLY_ITEMS
+        # for quality in range()
     def test_good_wine_happy_day(self):
         pass
 
