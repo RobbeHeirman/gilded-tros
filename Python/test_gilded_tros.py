@@ -26,18 +26,30 @@ class ItemConstructorTest(unittest.TestCase):
 
     def test_backstage_passes_happy_day(self):
         pass
-# TODO: Constructor boundary tests.
-# TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
-# TODO: test raise ValueError legendary item != 80
+
+    # TODO: Constructor boundary tests.
+    # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
+    def test_item_boundaries(self):
+        pass
+
+    # TODO: test raise ValueError legendary item != 80
+    def test_legendary_item_boundaries(self):
+        pass
 
 
-class UpdateQualityTest(unittest.TestCase):
-    pass
 # TODO: update_quality tests
-# TODO: Happy day scenario -> check end result after x loops for each kind of item
-# TODO: check invariants during update_quality function
-#       - item boundaries
-#       - legendary item
+class UpdateQualityTest(unittest.TestCase):
+    # TODO: Happy day scenario -> check end result after x loops for each kind of item
+    def test_update_quality_happy_day(self):
+        pass
+
+    # TODO: check invariants during update_quality function
+    def test_invariant_item_boundaries(self):
+        pass
+
+    def test_invariant_legendary_item(self):
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()
