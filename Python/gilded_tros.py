@@ -6,6 +6,7 @@ class GildedTros(object):
         self.items = items
 
     def update_quality(self):
+        # TODO: quite alot
         for item in self.items:
             if item.name != "Good Wine" and item.name != "Backstage passes for Re:Factor" \
                     and item.name != "Backstage passes for HAXX":
@@ -45,3 +46,8 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+
+
+def item_factory(name, sell_in, quality):
+    # TODO: needs to be implemented
+    return Item(name, sell_in , quality)
