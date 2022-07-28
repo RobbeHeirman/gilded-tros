@@ -43,9 +43,9 @@ class ItemConstructorTest(unittest.TestCase):
     def test_item_happy_day(self):
         test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
         for test_name in test_names:
-            for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND):
+            for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
                 item = item_factory(test_name, 0, quality)
-                self.assertTrue(constants.ITEM_QUALITY_LOWER_BOUND < item.quality < constants.ITEM_QUALITY_UPPER_BOUND)
+                self.assertTrue(constants.ITEM_QUALITY_LOWER_BOUND <= item.quality <= constants.ITEM_QUALITY_UPPER_BOUND)
 
     def test_legendary_item_happy_day(self):
         for test_name in _LEGENDARY_ITEMS:
