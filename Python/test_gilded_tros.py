@@ -41,19 +41,15 @@ class GildedTrosTest(unittest.TestCase):
 class ItemConstructorTest(unittest.TestCase):
 
     def test_item_happy_day(self):
-        test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _LEGENDARY_ITEMS + _SMELLY_ITEMS
+        test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
         for test_name in test_names:
             for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND):
-                item_factory(test_name, 999, quality)
-
-    def test_good_wine_happy_day(self):
-        pass
+                item = item_factory(test_name, 0, quality)
+                self.assertTrue(constants.ITEM_QUALITY_LOWER_BOUND < item.quality < constants.ITEM_QUALITY_UPPER_BOUND)
 
     def test_legendary_item_happy_day(self):
-        pass
-
-    def test_backstage_passes_happy_day(self):
-        pass
+        for test_name in _LEGENDARY_ITEMS:
+            pass
 
     # TODO: Constructor boundary tests.
     # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
