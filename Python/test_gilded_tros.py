@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
-from gilded_tros import Item, GildedTros
+from gilded_tros import Item, GildedTros, item_factory
+import constants
 
 _ITEM_NAMES = (
     "Ring of Cleansening Code",
@@ -39,10 +40,12 @@ class GildedTrosTest(unittest.TestCase):
 
 class ItemConstructorTest(unittest.TestCase):
 
-    # TODO: Item constructor happy day
     def test_item_happy_day(self):
         test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _LEGENDARY_ITEMS + _SMELLY_ITEMS
-        # for quality in range()
+        for test_name in test_names:
+            for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND):
+                item_factory(test_name, 999, quality)
+
     def test_good_wine_happy_day(self):
         pass
 
