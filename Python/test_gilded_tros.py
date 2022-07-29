@@ -96,32 +96,27 @@ class UpdateQualityRegularTest(unittest.TestCase):
         self.starting_item_quality = 45  # Arbitrary number
         self.sell_days = 30
         self.regular_items = _item_generator(_ITEM_NAMES, self.sell_days, self.starting_item_quality)
-        self.good_wine = _item_generator(_GOOD_WINE, self.sell_days, self.starting_item_quality)
-        self.legendary_items = _item_generator(_LEGENDARY_ITEMS,
-                                               self.sell_days,
-                                               constants.LEGENDARY_ITEM_QUALITY)
-        self.smelly_items = _item_generator(_SMELLY_ITEMS, self.sell_days, self.starting_item_quality)
+        self.driver = GildedTros(self.regular_items
+                                 )
 
     def test_update_quality_happy_day(self):
-        items_to_test = self.regular_items + self.legendary_items + self.smelly_items + self.good_wine
-        driver = GildedTros(items_to_test)
         run_range = self.sell_days // 2
-        for _ in range(run_range):
-            driver.update_quality()
 
-        # TODO separate tests for seperate items?
-        for item in self.regular_items + self.good_wine + self.smelly_items:
-            self.assertEqual(item.quality, self.starting_item_quality - run_range)
+        def _inner_run(run_time, equals):
+            for _ in range(run_time):
+                self.driver.update_quality()
+            for item in self.regular_items:
+                self.assertEqual(item.quality, equals)
 
-        for item in self.legendary_items:
-            self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
+        _inner_run(run_range, (self.starting_item_quality - run_range) * constants.ITEM_QUALITY_DETERIORATION_RATE)
+        _inner_run(run_range, (self.starting_item_quality - (2 * run_range + self.sell_days % 2)) * constants.ITEM_QUALITY_DETERIORATION_RATE)
+        _inner_run(1, self.starting_item_quality - self.sell_days - constants.ITEM_OVERDUE_FACTOR)
 
-    # TODO: check invariants during update_quality function
     def test_invariant_item_boundaries(self):
-        pass
-
-    def test_invariant_legendary_item(self):
-        pass
+        for _ in range(self.starting_item_quality + self.sell_days):
+            self.driver.update_quality()
+        for item in self.regular_items:
+            self.assertEqual(item.quality, 0)
 
 
 class UpdateQualityGoodWineTest(unittest.TestCase):
@@ -129,7 +124,15 @@ class UpdateQualityGoodWineTest(unittest.TestCase):
 
 
 class UpdateQualityLegendaryItems(unittest.TestCase):
-    pass
+
+    def setUp(self) -> None:
+        self.sell_days = 30
+        self.starting_item_quality = 45
+        self.legendary_items = _item_generator(_LEGENDARY_ITEMS, self.sell_days, self.starting_item_quality)
+
+    def test_invariant_legendary_item(self):
+        for item in self.legendary_items:
+            self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
 
 class UpdateQualitySmellyItems(unittest.TestCase):
