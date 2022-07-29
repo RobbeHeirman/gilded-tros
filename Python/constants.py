@@ -1,4 +1,5 @@
-import dataclasses
+
+# TODO: this may be better closer to their class implementations.
 
 ITEM_QUALITY_LOWER_BOUND = 0
 ITEM_QUALITY_UPPER_BOUND = 50

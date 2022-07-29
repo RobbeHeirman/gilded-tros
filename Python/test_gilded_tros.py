@@ -90,13 +90,13 @@ class ItemConstructorTest(unittest.TestCase):
 
 
 # TODO: update_quality tests
-class UpdateQualityTest(unittest.TestCase):
+class UpdateQualityRegularTest(unittest.TestCase):
     # TODO: Happy day scenario -> check end result after x loops for each kind of item
     def setUp(self) -> None:
-        self.starting_item_quality = 15  # Arbitrary number
+        self.starting_item_quality = 45  # Arbitrary number
         self.sell_days = 30
         self.regular_items = _item_generator(_ITEM_NAMES, self.sell_days, self.starting_item_quality)
-        self.good_wine = item_factory(_GOOD_WINE, self.sell_days, self.starting_item_quality)
+        self.good_wine = _item_generator(_GOOD_WINE, self.sell_days, self.starting_item_quality)
         self.legendary_items = _item_generator(_LEGENDARY_ITEMS,
                                                self.sell_days,
                                                constants.LEGENDARY_ITEM_QUALITY)
@@ -105,6 +105,16 @@ class UpdateQualityTest(unittest.TestCase):
     def test_update_quality_happy_day(self):
         items_to_test = self.regular_items + self.legendary_items + self.smelly_items + self.good_wine
         driver = GildedTros(items_to_test)
+        run_range = self.sell_days // 2
+        for _ in range(run_range):
+            driver.update_quality()
+
+        # TODO seperate tests for seperate items?
+        for item in self.regular_items + self.good_wine + self.smelly_items:
+            self.assertEqual(item.quality, self.starting_item_quality - run_range)
+
+        for item in self.legendary_items:
+            self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
     # TODO: check invariants during update_quality function
     def test_invariant_item_boundaries(self):
