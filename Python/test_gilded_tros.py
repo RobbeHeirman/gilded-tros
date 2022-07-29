@@ -35,6 +35,10 @@ def _regular_quality_item_names():
     return _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
 
 
+def _item_generator(names: [str], sell_days: int, quality: int) -> [Item]:
+    return [item_factory(names, sell_days, quality) for name in names]
+
+
 class GildedTrosTest(unittest.TestCase):
     def test_foo(self):
         items = [Item("foo", 0, 0)]
@@ -88,15 +92,20 @@ class ItemConstructorTest(unittest.TestCase):
 # TODO: update_quality tests
 class UpdateQualityTest(unittest.TestCase):
     # TODO: Happy day scenario -> check end result after x loops for each kind of item
-
     def setUp(self) -> None:
         self.starting_item_quality = 15  # Arbitrary number
         self.sell_days = 30
-        self.regular_items = [item_factory(name, self.sell_days, self.starting_item_quality) for name in
-                              _regular_quality_item_names()]
+        self.regular_items = _item_generator(_ITEM_NAMES, self.sell_days, self.starting_item_quality)
+        self.good_wine = item_factory(_GOOD_WINE, self.sell_days, self.starting_item_quality)
+        self.legendary_items = _item_generator(_LEGENDARY_ITEMS,
+                                               self.sell_days,
+                                               constants.LEGENDARY_ITEM_QUALITY)
+        self.smelly_items = _item_generator(_SMELLY_ITEMS, self.sell_days, self.starting_item_quality)
 
     def test_update_quality_happy_day(self):
-        pass
+        items_to_test = self.regular_items + self.legendary_items + self.smelly_items + self.good_wine
+        driver = GildedTros(items_to_test)
+
     # TODO: check invariants during update_quality function
     def test_invariant_item_boundaries(self):
         pass

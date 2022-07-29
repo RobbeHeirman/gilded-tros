@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# TODO: What is the purpose of this class?
 class GildedTros(object):
 
     def __init__(self, items):
