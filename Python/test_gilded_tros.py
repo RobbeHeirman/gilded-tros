@@ -31,7 +31,7 @@ _SMELLY_ITEMS = (
 )
 
 
-def _regular_quality_items():
+def _regular_quality_item_names():
     return _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
 
 
@@ -45,7 +45,7 @@ class GildedTrosTest(unittest.TestCase):
 
 class ItemConstructorTest(unittest.TestCase):
     def test_item_happy_day(self):
-        test_names = _regular_quality_items()
+        test_names = _regular_quality_item_names()
         for test_name in test_names:
             for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
                 item = item_factory(test_name, 0, quality)
@@ -59,7 +59,7 @@ class ItemConstructorTest(unittest.TestCase):
 
     # TODO: Constructor boundary tests.
     def test_item_boundaries(self):
-        test_names = _regular_quality_items()
+        test_names = _regular_quality_item_names()
         # Value lower boundary upper boundary
         for name in test_names:
             with self.assertRaises(ValueError):
@@ -76,7 +76,7 @@ class ItemConstructorTest(unittest.TestCase):
             constants.LEGENDARY_ITEM_QUALITY + 1,
             -1 * constants.LEGENDARY_ITEM_QUALITY - 1,
             -1 * constants.LEGENDARY_ITEM_QUALITY + 1,
-            constants.LEGENDARY_ITEM_QUALITY + (1 / 2 ** 55),  # Forgot ULP in python
+            constants.LEGENDARY_ITEM_QUALITY + (1 / 2 ** 55),  # ULP in python?
             constants.LEGENDARY_ITEM_QUALITY - (1 / 2 ** 55)
         )
 
@@ -88,9 +88,15 @@ class ItemConstructorTest(unittest.TestCase):
 # TODO: update_quality tests
 class UpdateQualityTest(unittest.TestCase):
     # TODO: Happy day scenario -> check end result after x loops for each kind of item
+
+    def setUp(self) -> None:
+        self.starting_item_quality = 15  # Arbitrary number
+        self.sell_days = 30
+        self.regular_items = [item_factory(name, self.sell_days, self.starting_item_quality) for name in
+                              _regular_quality_item_names()]
+
     def test_update_quality_happy_day(self):
         pass
-
     # TODO: check invariants during update_quality function
     def test_invariant_item_boundaries(self):
         pass
