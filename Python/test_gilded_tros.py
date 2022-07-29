@@ -29,6 +29,9 @@ _SMELLY_ITEMS = (
     "Ugly Variable Names"
 )
 
+def _regular_quality_items():
+    return _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
+
 
 class GildedTrosTest(unittest.TestCase):
     def test_foo(self):
@@ -39,9 +42,8 @@ class GildedTrosTest(unittest.TestCase):
 
 
 class ItemConstructorTest(unittest.TestCase):
-
     def test_item_happy_day(self):
-        test_names = _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
+        test_names = _regular_quality_items()
         for test_name in test_names:
             for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
                 item = item_factory(test_name, 0, quality)
@@ -52,10 +54,18 @@ class ItemConstructorTest(unittest.TestCase):
             item = item_factory(test_name, 0, constants.LEGENDARY_ITEM_QUALITY)
             self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
+
     # TODO: Constructor boundary tests.
     # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
     def test_item_boundaries(self):
-        pass
+
+
+        test_names = _regular_quality_items()
+
+        # Value lower boundary upper boundary
+        for name in test_names:
+            self.assertRaises(ValueError, Item(name, 468, constants.ITEM_QUALITY_LOWER_BOUND - 1))
+            self.assertRaises(ValueError, Item(name, 468, constants.ITEM_QUALITY_UPPER_BOUND + 1))
 
     # TODO: test raise ValueError legendary item != 80
     def test_legendary_item_boundaries(self):
