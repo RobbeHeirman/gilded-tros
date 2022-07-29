@@ -109,7 +109,7 @@ class UpdateQualityRegularTest(unittest.TestCase):
         for _ in range(run_range):
             driver.update_quality()
 
-        # TODO seperate tests for seperate items?
+        # TODO separate tests for seperate items?
         for item in self.regular_items + self.good_wine + self.smelly_items:
             self.assertEqual(item.quality, self.starting_item_quality - run_range)
 
@@ -122,6 +122,22 @@ class UpdateQualityRegularTest(unittest.TestCase):
 
     def test_invariant_legendary_item(self):
         pass
+
+
+class UpdateQualityGoodWineTest(unittest.TestCase):
+    pass
+
+
+class UpdateQualityLegendaryItems(unittest.TestCase):
+    pass
+
+
+class UpdateQualitySmellyItems(unittest.TestCase):
+    pass
+
+
+class UpdateQualityBackstageItems(unittest.TestCase):
+    pass
 
 
 if __name__ == '__main__':
