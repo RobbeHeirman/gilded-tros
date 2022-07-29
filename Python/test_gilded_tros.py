@@ -89,9 +89,7 @@ class ItemConstructorTest(unittest.TestCase):
                 item_factory(name, 404, modified_quality)
 
 
-# TODO: update_quality tests
 class UpdateQualityRegularTest(unittest.TestCase):
-    # TODO: Happy day scenario -> check end result after x loops for each kind of item
     def setUp(self) -> None:
         self.starting_item_quality = 45  # Arbitrary number
         self.sell_days = 30
@@ -109,7 +107,8 @@ class UpdateQualityRegularTest(unittest.TestCase):
                 self.assertEqual(item.quality, equals)
 
         _inner_run(run_range, (self.starting_item_quality - run_range) * constants.ITEM_QUALITY_DETERIORATION_RATE)
-        _inner_run(run_range, (self.starting_item_quality - (2 * run_range + self.sell_days % 2)) * constants.ITEM_QUALITY_DETERIORATION_RATE)
+        _inner_run(run_range, (self.starting_item_quality - (
+                    2 * run_range + self.sell_days % 2)) * constants.ITEM_QUALITY_DETERIORATION_RATE)
         _inner_run(1, self.starting_item_quality - self.sell_days - constants.ITEM_OVERDUE_FACTOR)
 
     def test_invariant_item_boundaries(self):
