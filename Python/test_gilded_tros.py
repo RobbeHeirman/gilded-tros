@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import itertools
 import unittest
 from gilded_tros import Item, GildedTros, item_factory
 import constants
@@ -29,6 +30,7 @@ _SMELLY_ITEMS = (
     "Ugly Variable Names"
 )
 
+
 def _regular_quality_items():
     return _ITEM_NAMES + _GOOD_WINE + _BACKSTAGE_PASSES + _SMELLY_ITEMS
 
@@ -47,29 +49,40 @@ class ItemConstructorTest(unittest.TestCase):
         for test_name in test_names:
             for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
                 item = item_factory(test_name, 0, quality)
-                self.assertTrue(constants.ITEM_QUALITY_LOWER_BOUND <= item.quality <= constants.ITEM_QUALITY_UPPER_BOUND)
+                self.assertTrue(
+                    constants.ITEM_QUALITY_LOWER_BOUND <= item.quality <= constants.ITEM_QUALITY_UPPER_BOUND)
 
     def test_legendary_item_happy_day(self):
         for test_name in _LEGENDARY_ITEMS:
             item = item_factory(test_name, 0, constants.LEGENDARY_ITEM_QUALITY)
             self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
-
     # TODO: Constructor boundary tests.
-    # TODO: test raise ValuError quality UPPER_BOUNDARY > item > LOWER_BOUNDARY
     def test_item_boundaries(self):
-
-
         test_names = _regular_quality_items()
-
         # Value lower boundary upper boundary
         for name in test_names:
-            self.assertRaises(ValueError, Item(name, 468, constants.ITEM_QUALITY_LOWER_BOUND - 1))
-            self.assertRaises(ValueError, Item(name, 468, constants.ITEM_QUALITY_UPPER_BOUND + 1))
+            with self.assertRaises(ValueError):
+                item_factory(name, 468, constants.ITEM_QUALITY_LOWER_BOUND - 1)
 
-    # TODO: test raise ValueError legendary item != 80
+            with self.assertRaises(ValueError):
+                item_factory(name, 468, constants.ITEM_QUALITY_UPPER_BOUND + 1)
+
     def test_legendary_item_boundaries(self):
-        pass
+
+        modified = (
+            -1 * constants.LEGENDARY_ITEM_QUALITY,
+            constants.LEGENDARY_ITEM_QUALITY - 1,
+            constants.LEGENDARY_ITEM_QUALITY + 1,
+            -1 * constants.LEGENDARY_ITEM_QUALITY - 1,
+            -1 * constants.LEGENDARY_ITEM_QUALITY + 1,
+            constants.LEGENDARY_ITEM_QUALITY + (1 / 2 ** 55),  # Forgot ULP in python
+            constants.LEGENDARY_ITEM_QUALITY - (1 / 2 ** 55)
+        )
+
+        for name, modified_quality in itertools.product(_LEGENDARY_ITEMS, modified):
+            with self.assertRaises(ValueError):
+                item_factory(name, 404, modified_quality)
 
 
 # TODO: update_quality tests
