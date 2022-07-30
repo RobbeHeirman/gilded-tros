@@ -62,6 +62,23 @@ class Item:
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
 
+def _regular_deterioration(days: int, start_days, factor: float, overdue_factor: float) -> float:
+    """
+    Calculates how much reduction on quality needs to be applied. Takes into account when a item is overdue.
+    :param days: days we progress
+    :param start_days: day we started from
+    :param factor: the factor to reduce with
+    :param overdue_factor: the factor that is applied when an item is overdue
+    :return: the amount to reduce
+    """
+
+    negative_days = min((0, start_days - days)) * -1
+    positive_days = days - negative_days
+    positive_reduction = positive_days * factor
+    negative_reduction = negative_days * factor * overdue_factor
+    return positive_reduction + negative_reduction
+
+
 class ItemWrapper(ABC):
     """
     Wrap old item class to extend the functionality.
@@ -118,14 +135,13 @@ class _RegularItemWrapper(ItemWrapper, ABC):
         :param days: amount of days we progress. Defaults to 1
         :return: None
         """
-        negative_days = min((0, self._item.sell_in - days)) * -1
-        positive_days = days - negative_days
 
-        positive_reduction = positive_days * ItemWrapper.QUALITY_DETERIORATION_RATE
-        negative_reduction = negative_days * ItemWrapper.QUALITY_DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
-
+        new_val = self._item.quality - _regular_deterioration(days,
+                                                              self.sell_in,
+                                                              self.QUALITY_DETERIORATION_RATE,
+                                                              self.OVERDUE_FACTOR
+                                                              )
         self._item.sell_in -= days
-        new_val = self._item.quality - positive_reduction - negative_reduction
         self._item.quality = max((new_val, ItemWrapper.QUALITY_LOWER_BOUND))
 
 
@@ -161,7 +177,7 @@ class _LegendaryItemWrapper(ItemWrapper):
 class _BackstageItemWrapper(ItemWrapper):
     QUALITY_THRESHOLDS = {
         10: 2 * ItemWrapper.QUALITY_DETERIORATION_RATE,
-        5:  3 * ItemWrapper.QUALITY_DETERIORATION_RATE,
+        5: 3 * ItemWrapper.QUALITY_DETERIORATION_RATE,
     }
 
     def update_quality(self, days: int = 1) -> None:
@@ -203,9 +219,6 @@ class _SmellyItemWrapper(ItemWrapper):
     SMELLY_ITEMS_DETERIORATION_RATE = 2 * ItemWrapper.QUALITY_DETERIORATION_RATE
 
     def update_quality(self, days: int = 1) -> None:
-        pass
-
-    def _check_item_constraints(self) -> None:
         pass
 
 
