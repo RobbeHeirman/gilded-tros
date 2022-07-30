@@ -96,7 +96,7 @@ class ItemWrapper(ABC):
     @abstractmethod
     def update_quality(self, days: int = 1) -> None:
         """
-        Sub classes must implement update_quality. Updates the quality and amount of sell in days on an item.
+        Subclasses must implement update_quality. Updates the quality and amount of sell in days on an item.
         :param days: the amount of days we want to update for. Defaults to 1
         :return: None
         """
@@ -124,13 +124,21 @@ class _RegularItemWrapper(ItemWrapper, ABC):
         negative_reduction = negative_days * ItemWrapper.QUALITY_DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
 
         self._item.sell_in -= days
-        self._item.quality = max(
-            (self._item.quality - positive_reduction - negative_reduction, ItemWrapper.QUALITY_LOWER_BOUND))
+        new_val = self._item.quality - positive_reduction - negative_reduction
+        self._item.quality = max((new_val, ItemWrapper.QUALITY_LOWER_BOUND))
 
 
 class _GoodWineItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
-        pass
+        """
+        Good wine always increases in quality
+        :param days:  amount of days we progress. Defaults to 1
+        :return: None
+        """
+
+        self._item.sell_in -= days
+        new_val = self.__class__.QUALITY_DETERIORATION_RATE * days + self._item.quality
+        self._item.quality = min((self.__class__.QUALITY_UPPER_BOUND, new_val))
 
 
 class _LegendaryItemWrapper(ItemWrapper):
