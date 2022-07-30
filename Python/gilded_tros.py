@@ -124,7 +124,8 @@ class _RegularItemWrapper(ItemWrapper, ABC):
         negative_reduction = negative_days * ItemWrapper.QUALITY_DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
 
         self._item.sell_in -= days
-        self._item.quality -= positive_reduction + negative_reduction
+        self._item.quality = max(
+            (self._item.quality - positive_reduction - negative_reduction, ItemWrapper.QUALITY_LOWER_BOUND))
 
 
 class _GoodWineItemWrapper(ItemWrapper):
