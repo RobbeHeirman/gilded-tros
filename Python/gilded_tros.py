@@ -42,10 +42,15 @@ def _regular_deterioration(days: int, start_days, factor: float, overdue_factor:
     :return: the amount to reduce
     """
 
-    negative_days = min((0, start_days - days)) * -1
+    if start_days > 0:
+        negative_days = min((0, start_days - days)) * -1
+    else:
+        negative_days = days
+
     positive_days = days - negative_days
     positive_reduction = positive_days * factor
     negative_reduction = negative_days * factor * overdue_factor
+    # print(negative_reduction)
     return positive_reduction + negative_reduction
 
 

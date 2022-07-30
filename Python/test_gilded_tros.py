@@ -148,7 +148,7 @@ class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
 class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.items = _item_generator(_LEGENDARY_ITEMS, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_generator(_LEGENDARY_ITEMS, self.SELL_DAYS, _LegendaryItemWrapper.ITEM_QUALITY)
         self.driver = GildedTros(self.items)
 
     def test_update_quality_happy_day(self):
@@ -184,17 +184,20 @@ class UpdateQualityBackstageItems(BaseUpdateQualityTest):
 
 
 class UpdateQualitySmellyItems(BaseUpdateQualityTest):
-    ITEM_QUALITY = 200
+    STARTING_ITEM_QUALITY = 50
+    SELL_DAYS = 8
 
     def setUp(self) -> None:
-        self.items = _item_generator(_SMELLY_ITEMS, self.SELL_DAYS, self.ITEM_QUALITY)
+
+        self.items = _item_generator(_SMELLY_ITEMS, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.driver = GildedTros(self.items)
 
     def test_smelly_happy_day(self):
         time_to_run = self.SELL_DAYS // 2
-        # 200  - 2 * 15 = 170,
+        # q = 42
         self._inner_run(time_to_run,
                         self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run)
-        # 140
+        # q = 34
         self._inner_run(time_to_run,
                         self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run * 2)
         intermediate_val = self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run * 2
@@ -202,11 +205,12 @@ class UpdateQualitySmellyItems(BaseUpdateQualityTest):
         self._inner_run(self.SELL_DAYS % 2, intermediate_val)
 
         # Below 0 sell days
+        # 34 - 16 = 18
         intermediate_val -= time_to_run * _SmellyItemWrapper.DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
         self._inner_run(time_to_run, intermediate_val)
 
     def test_boundaries_smelly_items(self):
-        run_time = self.ITEM_QUALITY
+        run_time = self.STARTING_ITEM_QUALITY
         self._inner_run(run_time, 0)
 
     # TODO end to end/ blackbox tests?
