@@ -74,9 +74,9 @@ class ItemWrapper(Item, ABC):
         pass
 
     def _check_item_constraints(self):
-        if not ItemWrapper.QUALITY_LOWER_BOUND < self.quality < ItemWrapper.QUALITY_UPPER_BOUND:
-            raise ValueError(f'Item Quality bounds not respected: = {self.quality}\n must be between '
-                             f'({ItemWrapper.QUALITY_LOWER_BOUND},{ItemWrapper.QUALITY_UPPER_BOUND}')
+        if not ItemWrapper.QUALITY_LOWER_BOUND <= self.quality <= ItemWrapper.QUALITY_UPPER_BOUND:
+            raise ValueError(f'Item Quality bounds not respected: = {self.quality}. Must be between '
+                             f'({ItemWrapper.QUALITY_LOWER_BOUND},{ItemWrapper.QUALITY_UPPER_BOUND})')
 
 
 class _RegularItemWrapper(ItemWrapper, ABC):
@@ -128,7 +128,12 @@ class _SmellyItemWrapper(ItemWrapper):
 
 def item_wrapper_factory(item: Item) -> ItemWrapper:
     # Not a fan of hard coding and deferring types by name.
-    # Could also explicitly define all items?
+    # Could introduce magic with regexes? => let's be explicit
+    # Alternative is a dict
     match item.name:
 
+        case 'B-DAWG Keychain': return _LegendaryItemWrapper(item)
+        case 'Good Wine': return _GoodWineItemWrapper(item)
+        case 'Backstage passes for Re:Factor', 'Backstage passes for HAXX': return _BackstageItemWrapper(item)
+        case 'Duplicate Code', 'Long Methods', 'Ugly Variable Names': return _SmellyItemWrapper(item)
         case _: return _RegularItemWrapper(item)

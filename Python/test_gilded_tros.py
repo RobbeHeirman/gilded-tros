@@ -81,8 +81,8 @@ class ItemConstructorTest(unittest.TestCase):
             _LegendaryItemWrapper.ITEM_QUALITY + 1,
             -1 * _LegendaryItemWrapper.ITEM_QUALITY - 1,
             -1 * _LegendaryItemWrapper.ITEM_QUALITY + 1,
-            _LegendaryItemWrapper.ITEM_QUALITY + (1 / 2 ** 55),  # ULP in python?
-            _LegendaryItemWrapper.ITEM_QUALITY - (1 / 2 ** 55)
+            _LegendaryItemWrapper.ITEM_QUALITY + (1 / 2 ** 10),
+            _LegendaryItemWrapper.ITEM_QUALITY - (1 / 2 ** 10)
         )
 
         for name, modified_quality in itertools.product(_LEGENDARY_ITEMS, modified):
