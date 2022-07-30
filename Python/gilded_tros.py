@@ -10,37 +10,45 @@ class GildedTros(object):
         self.items = items
         self._wrapped_items = [item_wrapper_factory(item) for item in items]
 
-    def update_quality(self):
+    def update_quality(self, days: int = 1) -> None:
+        """
+        Main driver function. progresses the quality of items by given days.
+        :param days: the amount of days to progress. defaults to 1
+        :return:
+        """
+        for wrap_item in self._wrapped_items:
+            wrap_item.update_quality(days)
+
         # TODO: quite alot
-        for item in self.items:
-            if item.name != "Good Wine" and item.name != "Backstage passes for Re:Factor" \
-                    and item.name != "Backstage passes for HAXX":
-                if item.quality > 0:
-                    if item.name != "B-DAWG Keychain":
-                        item.quality = item.quality - 1
-            else:
-                if item.quality < 50:
-                    item.quality = item.quality + 1
-                    if item.name == "Backstage passes for Re:Factor" or item.name == "Backstage passes for HAXX":
-                        if item.sell_in < 11:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-                        if item.sell_in < 6:
-                            if item.quality < 50:
-                                item.quality = item.quality + 1
-            if item.name != "B-DAWG Keychain":
-                item.sell_in = item.sell_in - 1
-            if item.sell_in < 0:
-                if item.name != "Good Wine":
-                    if item.name != "Backstage passes for Re:Factor" and item.name != "Backstage passes for HAXX":
-                        if item.quality > 0:
-                            if item.name != "B-DAWG Keychain":
-                                item.quality = item.quality - 1
-                    else:
-                        item.quality = item.quality - item.quality
-                else:
-                    if item.quality < 50:
-                        item.quality = item.quality + 1
+        # for item in self.items:
+        #     if item.name != "Good Wine" and item.name != "Backstage passes for Re:Factor" \
+        #             and item.name != "Backstage passes for HAXX":
+        #         if item.quality > 0:
+        #             if item.name != "B-DAWG Keychain":
+        #                 item.quality = item.quality - 1
+        #     else:
+        #         if item.quality < 50:
+        #             item.quality = item.quality + 1
+        #             if item.name == "Backstage passes for Re:Factor" or item.name == "Backstage passes for HAXX":
+        #                 if item.sell_in < 11:
+        #                     if item.quality < 50:
+        #                         item.quality = item.quality + 1
+        #                 if item.sell_in < 6:
+        #                     if item.quality < 50:
+        #                         item.quality = item.quality + 1
+        #     if item.name != "B-DAWG Keychain":
+        #         item.sell_in = item.sell_in - 1
+        #     if item.sell_in < 0:
+        #         if item.name != "Good Wine":
+        #             if item.name != "Backstage passes for Re:Factor" and item.name != "Backstage passes for HAXX":
+        #                 if item.quality > 0:
+        #                     if item.name != "B-DAWG Keychain":
+        #                         item.quality = item.quality - 1
+        #             else:
+        #                 item.quality = item.quality - item.quality
+        #         else:
+        #             if item.quality < 50:
+        #                 item.quality = item.quality + 1
 
 
 class Item:
@@ -53,7 +61,7 @@ class Item:
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
 
-class ItemWrapper(Item, ABC):
+class ItemWrapper(ABC):
     """
     Wrap old item class to extend the functionality.
     Each implementation class of the ItemWrapper will need implement update_quality(days=1).
@@ -66,7 +74,7 @@ class ItemWrapper(Item, ABC):
     OVERDUE_FACTOR = 2
 
     def __init__(self, item: Item):
-        super().__init__(item.name, item.sell_in, item.quality)
+        #TODO i should update the referenced item...
         self._item = item
         self._check_item_constraints()
 
@@ -75,8 +83,8 @@ class ItemWrapper(Item, ABC):
         pass
 
     def _check_item_constraints(self):
-        if not ItemWrapper.QUALITY_LOWER_BOUND <= self.quality <= ItemWrapper.QUALITY_UPPER_BOUND:
-            raise ValueError(f'Item Quality bounds not respected: = {self.quality}. Must be between '
+        if not ItemWrapper.QUALITY_LOWER_BOUND <= self._item.quality <= ItemWrapper.QUALITY_UPPER_BOUND:
+            raise ValueError(f'Item Quality bounds not respected: = {self._item.quality}. Must be between '
                              f'({ItemWrapper.QUALITY_LOWER_BOUND},{ItemWrapper.QUALITY_UPPER_BOUND})')
 
 
@@ -139,8 +147,13 @@ def item_wrapper_factory(item: Item) -> ItemWrapper:
     # Could introduce magic with regexes? => let's be explicit.
     # Alternative is a dict.
     match item.name:
-        case 'B-DAWG Keychain': return _LegendaryItemWrapper(item)
-        case 'Good Wine': return _GoodWineItemWrapper(item)
-        case 'Backstage passes for Re:Factor', 'Backstage passes for HAXX': return _BackstageItemWrapper(item)
-        case 'Duplicate Code', 'Long Methods', 'Ugly Variable Names': return _SmellyItemWrapper(item)
-        case _: return _RegularItemWrapper(item)
+        case 'B-DAWG Keychain':
+            return _LegendaryItemWrapper(item)
+        case 'Good Wine':
+            return _GoodWineItemWrapper(item)
+        case 'Backstage passes for Re:Factor', 'Backstage passes for HAXX':
+            return _BackstageItemWrapper(item)
+        case 'Duplicate Code', 'Long Methods', 'Ugly Variable Names':
+            return _SmellyItemWrapper(item)
+        case _:
+            return _RegularItemWrapper(item)
