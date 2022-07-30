@@ -38,7 +38,7 @@ def _regular_quality_item_names():
 
 
 def _item_generator(names: [str], sell_days: int, quality: int) -> [Item]:
-    return [item_factory(name, sell_days, quality) for name in names]
+    return [item_factory(Item(name, sell_days, quality)) for name in names]
 
 
 class GildedTrosTest(unittest.TestCase):
@@ -52,15 +52,15 @@ class GildedTrosTest(unittest.TestCase):
 class ItemConstructorTest(unittest.TestCase):
     def test_item_happy_day(self):
         test_names = _regular_quality_item_names()
-        for test_name in test_names:
-            for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
-                item = item_factory(test_name, 0, quality)
+        for quality in range(constants.ITEM_QUALITY_LOWER_BOUND, constants.ITEM_QUALITY_UPPER_BOUND + 1):
+            items = _item_generator(test_names, 44, quality)
+            for item in items:
                 self.assertTrue(
                     constants.ITEM_QUALITY_LOWER_BOUND <= item.quality <= constants.ITEM_QUALITY_UPPER_BOUND)
 
     def test_legendary_item_happy_day(self):
-        for test_name in _LEGENDARY_ITEMS:
-            item = item_factory(test_name, 0, constants.LEGENDARY_ITEM_QUALITY)
+        items = _item_generator(_LEGENDARY_ITEMS, 0, constants.LEGENDARY_ITEM_QUALITY)
+        for item in items:
             self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
     def test_item_boundaries(self):
@@ -68,10 +68,10 @@ class ItemConstructorTest(unittest.TestCase):
         # Value lower boundary upper boundary
         for name in test_names:
             with self.assertRaises(ValueError):
-                item_factory(name, 468, constants.ITEM_QUALITY_LOWER_BOUND - 1)
+                item_factory(Item(name, 468, constants.ITEM_QUALITY_LOWER_BOUND - 1))
 
             with self.assertRaises(ValueError):
-                item_factory(name, 468, constants.ITEM_QUALITY_UPPER_BOUND + 1)
+                item_factory(Item(name, 468, constants.ITEM_QUALITY_UPPER_BOUND + 1))
 
     def test_legendary_item_boundaries(self):
 
@@ -87,7 +87,7 @@ class ItemConstructorTest(unittest.TestCase):
 
         for name, modified_quality in itertools.product(_LEGENDARY_ITEMS, modified):
             with self.assertRaises(ValueError):
-                item_factory(name, 404, modified_quality)
+                item_factory(Item(name, 404, modified_quality))
 
 
 class BaseUpdateQualityTest(unittest.TestCase):

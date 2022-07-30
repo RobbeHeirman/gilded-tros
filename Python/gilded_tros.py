@@ -52,10 +52,6 @@ class Item:
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
 
-def item_factory(name, sell_in, quality):
-    # TODO: needs to be implemented
-    return Item(name, sell_in, quality)
-
 
 class ItemWrapper(Item, ABC):
     """
@@ -111,3 +107,7 @@ class _SmellyItemWrapper(ItemWrapper):
 
     def _check_item_constraints(self) -> None:
         pass
+
+
+def item_factory(item: Item):
+    pass
