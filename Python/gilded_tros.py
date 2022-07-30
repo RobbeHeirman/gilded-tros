@@ -74,6 +74,7 @@ class ItemWrapper(ABC):
     OVERDUE_FACTOR = 2
 
     def __init__(self, item: Item):
+        assert isinstance(item, Item)
         self._item = item
         self._check_item_constraints()
 
@@ -82,7 +83,7 @@ class ItemWrapper(ABC):
 
     @property
     def name(self):
-        return  self._item.name
+        return self._item.name
 
     @property
     def sell_in(self):
@@ -94,6 +95,11 @@ class ItemWrapper(ABC):
 
     @abstractmethod
     def update_quality(self, days: int = 1) -> None:
+        """
+        Sub classes must implement update_quality. Updates the quality and amount of sell in days on an item.
+        :param days: the amount of days we want to update for. Defaults to 1
+        :return: None
+        """
         pass
 
     def _check_item_constraints(self):
@@ -105,7 +111,20 @@ class ItemWrapper(ABC):
 class _RegularItemWrapper(ItemWrapper, ABC):
 
     def update_quality(self, days: int = 1) -> None:
-        pass
+        """
+        For regular items the rules are simple.
+        They deteriorate each day. And if their sell_in day is reached they deteriorate twice as fast.
+        :param days: amount of days we progress. Defaults to 1
+        :return: None
+        """
+        negative_days = min((0, self._item.sell_in - days)) * -1
+        positive_days = days - negative_days
+
+        positive_reduction = positive_days * ItemWrapper.QUALITY_DETERIORATION_RATE
+        negative_reduction = negative_days * ItemWrapper.QUALITY_DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
+
+        self._item.sell_in -= days
+        self._item.quality -= positive_reduction + negative_reduction
 
 
 class _GoodWineItemWrapper(ItemWrapper):
@@ -152,7 +171,7 @@ class _SmellyItemWrapper(ItemWrapper):
 def item_wrapper_factory(item: Item) -> ItemWrapper:
     """
     Implements the ItemWrapperfactory => Wrapping a legacy item object into an ItemWrapper object.
-    Will select the appropriate iplementation class based on name.
+    Will select the appropriate implementation class based on name.
     :param item: The (legacy item)
     :return: ItemWrapper object.
     """

@@ -38,6 +38,10 @@ def _regular_quality_item_names():
 
 
 def _item_generator(names: [str], sell_days: int, quality: int) -> [Item]:
+    return [Item(name, sell_days, quality) for name in names]
+
+
+def _item_wrapper_generator(names: [str], sell_days: int, quality: int) -> [Item]:
     return [item_wrapper_factory(Item(name, sell_days, quality)) for name in names]
 
 
@@ -53,13 +57,13 @@ class ItemConstructorTest(unittest.TestCase):
     def test_item_happy_day(self):
         test_names = _regular_quality_item_names()
         for quality in range(ItemWrapper.QUALITY_LOWER_BOUND, ItemWrapper.QUALITY_UPPER_BOUND + 1):
-            items = _item_generator(test_names, 44, quality)
+            items = _item_wrapper_generator(test_names, 44, quality)
             for item in items:
                 self.assertTrue(
                     ItemWrapper.QUALITY_LOWER_BOUND <= item.quality <= ItemWrapper.QUALITY_UPPER_BOUND)
 
     def test_legendary_item_happy_day(self):
-        items = _item_generator(_LEGENDARY_ITEMS, 0, _LegendaryItemWrapper.ITEM_QUALITY)
+        items = _item_wrapper_generator(_LEGENDARY_ITEMS, 0, _LegendaryItemWrapper.ITEM_QUALITY)
         for item in items:
             self.assertEqual(item.quality, _LegendaryItemWrapper.ITEM_QUALITY)
 
@@ -108,7 +112,7 @@ class BaseUpdateQualityTest(unittest.TestCase):
 
 class UpdateQualityRegularTest(BaseUpdateQualityTest):
     def setUp(self) -> None:
-        self.items = _item_generator(_ITEM_NAMES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_wrapper_generator(_ITEM_NAMES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
         self.driver = GildedTros(self.items)
 
     def test_update_quality_happy_day(self):
@@ -129,7 +133,7 @@ class UpdateQualityRegularTest(BaseUpdateQualityTest):
 class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.items = _item_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_wrapper_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
         self.driver = GildedTros(self.items)
 
     def test_update_quality_happy_day(self):
@@ -145,7 +149,7 @@ class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
 class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.items = _item_generator(_LEGENDARY_ITEMS, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_wrapper_generator(_LEGENDARY_ITEMS, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
         self.driver = GildedTros(self.items)
 
     def test_update_quality_happy_day(self):
@@ -159,7 +163,7 @@ class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
 
 class UpdateQualityBackstageItems(BaseUpdateQualityTest):
     def setUp(self) -> None:
-        self.items = _item_generator(_BACKSTAGE_PASSES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_wrapper_generator(_BACKSTAGE_PASSES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
         self.driver = GildedTros(self.items)
 
     # TODO: could be useful somewhere else?
@@ -194,7 +198,7 @@ class UpdateQualitySmellyItems(BaseUpdateQualityTest):
     ITEM_QUALITY = 200
 
     def setUp(self) -> None:
-        self.items = _item_generator(_SMELLY_ITEMS, self.SELL_DAYS, self.ITEM_QUALITY)
+        self.items = _item_wrapper_generator(_SMELLY_ITEMS, self.SELL_DAYS, self.ITEM_QUALITY)
 
     def test_smelly_happy_day(self):
         time_to_run = self.SELL_DAYS // 2
