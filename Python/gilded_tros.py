@@ -8,6 +8,7 @@ class GildedTros(object):
 
     def __init__(self, items):
         self.items = items
+        self._wrapped_items = [item_wrapper_factory(item) for item in items]
 
     def update_quality(self):
         # TODO: quite alot
@@ -127,11 +128,17 @@ class _SmellyItemWrapper(ItemWrapper):
 
 
 def item_wrapper_factory(item: Item) -> ItemWrapper:
-    # Not a fan of hard coding and deferring types by name.
-    # Could introduce magic with regexes? => let's be explicit
-    # Alternative is a dict
-    match item.name:
+    """
+    Implements the ItemWrapperfactory => Wrapping a legacy item object into an ItemWrapper object.
+    Will select the appropriate iplementation class based on name.
+    :param item: The (legacy item)
+    :return: ItemWrapper object.
+    """
 
+    # Not a fan of hard coding and deferring types by name.
+    # Could introduce magic with regexes? => let's be explicit.
+    # Alternative is a dict.
+    match item.name:
         case 'B-DAWG Keychain': return _LegendaryItemWrapper(item)
         case 'Good Wine': return _GoodWineItemWrapper(item)
         case 'Backstage passes for Re:Factor', 'Backstage passes for HAXX': return _BackstageItemWrapper(item)
