@@ -76,7 +76,7 @@ class ItemWrapper(Item, ABC):
     def _check_item_constraints(self):
         pass
 
-class RegularItemWrapper(ItemWrapper, ABC):
+class _RegularItemWrapper(ItemWrapper, ABC):
 
     def update_quality(self, days: int=1) -> None:
         pass
@@ -84,28 +84,28 @@ class RegularItemWrapper(ItemWrapper, ABC):
     def _check_item_constraints(self)-> None:
         pass
 
-class GoodWineItemWrapper(ItemWrapper):
+class _GoodWineItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class LegendaryItemWrapper(ItemWrapper):
+class _LegendaryItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class BackstageItemWrapper(ItemWrapper):
+class _BackstageItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class SmellyItemWrapper(ItemWrapper):
+class _SmellyItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
