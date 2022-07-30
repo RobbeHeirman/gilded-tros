@@ -74,9 +74,23 @@ class ItemWrapper(ABC):
     OVERDUE_FACTOR = 2
 
     def __init__(self, item: Item):
-        #TODO i should update the referenced item...
         self._item = item
         self._check_item_constraints()
+
+    def __repr__(self):
+        return self._item.__repr__()
+
+    @property
+    def name(self):
+        return  self._item.name
+
+    @property
+    def sell_in(self):
+        return self._item.sell_in
+
+    @property
+    def quality(self):
+        return self._item.quality
 
     @abstractmethod
     def update_quality(self, days: int = 1) -> None:
@@ -106,8 +120,8 @@ class _LegendaryItemWrapper(ItemWrapper):
         pass
 
     def _check_item_constraints(self) -> None:
-        if not self.quality == _LegendaryItemWrapper.ITEM_QUALITY:
-            raise ValueError(f'Legendary items always have a quality of {self.ITEM_QUALITY} now {self.quality}')
+        if not self._item.quality == _LegendaryItemWrapper.ITEM_QUALITY:
+            raise ValueError(f'Legendary items always have a quality of {self.ITEM_QUALITY} now {self._item.quality}')
 
 
 class _BackstageItemWrapper(ItemWrapper):
