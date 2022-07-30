@@ -84,28 +84,28 @@ class RegularItemWrapper(ItemWrapper, ABC):
     def _check_item_constraints(self)-> None:
         pass
 
-class GoodWineItemWrapper(ItemWrapper, ABC):
+class GoodWineItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class LegendaryItemWrapper(ItemWrapper, ABC):
+class LegendaryItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class BackstageItemWrapper(ItemWrapper, ABC):
+class BackstageItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
 
-class SmellyItemWrapper(ItemWrapper, ABC):
+class SmellyItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
         pass
 
