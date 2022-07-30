@@ -106,12 +106,9 @@ class _RegularItemWrapper(ItemWrapper, ABC):
         :return: None
         """
 
-        new_val = self._item.quality - _regular_deterioration(days,
-                                                              self.sell_in,
-                                                              self.QUALITY_DETERIORATION_RATE,
-                                                              self.OVERDUE_FACTOR
-                                                              )
+        minus_val = _regular_deterioration(days, self.sell_in, self.QUALITY_DETERIORATION_RATE, self.OVERDUE_FACTOR)
         self._item.sell_in -= days
+        new_val = self._item.quality - minus_val
         self._item.quality = max((new_val, ItemWrapper.QUALITY_LOWER_BOUND))
 
 
