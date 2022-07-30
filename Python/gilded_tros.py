@@ -62,7 +62,6 @@ class ItemWrapper(ABC):
     OVERDUE_FACTOR = 2
 
     def __init__(self, item: Item):
-        assert isinstance(item, Item)
         self._item = item
         self._check_item_constraints()
 
@@ -173,8 +172,6 @@ class _BackstageItemWrapper(ItemWrapper):
             # Bisect returns where on the left side we will need to insert the element to keep the list sorted.
             # Then it also holds true in what interval our number falls.
             key_index = bisect.bisect_left(keys, day_at)
-            # print(key_index)
-            # print(keys)
             if key_index < len(keys):
                 original_quality += self.__class__.QUALITY_THRESHOLDS[keys[key_index]]
 
@@ -214,7 +211,7 @@ def item_wrapper_factory(item: Item) -> ItemWrapper:
             return _GoodWineItemWrapper(item)
         case 'Backstage passes for Re:Factor' | 'Backstage passes for HAXX':
             return _BackstageItemWrapper(item)
-        case 'Duplicate Code', 'Long Methods' | 'Ugly Variable Names':
+        case 'Duplicate Code' | 'Long Methods' | 'Ugly Variable Names':
             return _SmellyItemWrapper(item)
         case _:
             return _RegularItemWrapper(item)
