@@ -4,6 +4,8 @@ import unittest
 from gilded_tros import Item, GildedTros, item_factory
 import constants
 
+# TODO documentation
+
 _ITEM_NAMES = (
     "Ring of Cleansening Code",
     "Elixir of the SOLID",
@@ -182,13 +184,34 @@ class UpdateQualityBackstageItems(BaseUpdateQualityTest):
         value_now = self.STARTING_ITEM_QUALITY + value_rate
         self._inner_run(time_ro_run, value_now)
         intervals = [abs(j - i) for i, j in zip(sorted_boundaries_keys[:-1], sorted_boundaries_keys[1:])]
+        # TODO: Improve this bisect func could be useful
         for i, interval in enumerate(intervals):
             self._inner_run(interval, value_now + interval * constants.BACKSTAGE_QUALITY_THRESHOLDS[sorted_boundaries_keys[i]])
 
 
-class UpdateQualitySmellyItems(unittest.TestCase):
-    pass
+class UpdateQualitySmellyItems(BaseUpdateQualityTest):
+    ITEM_QUALITY = 200
 
+    def setUp(self) -> None:
+        self.items = _item_generator(_SMELLY_ITEMS, self.SELL_DAYS, self.ITEM_QUALITY)
 
+    def test_smelly_happy_day(self):
+        time_to_run = self.SELL_DAYS // 2
+        # 200  - 2 * 15 = 170,
+        self._inner_run(time_to_run, self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run)
+        # 140
+        self._inner_run(time_to_run, self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2)
+        intermediate_val = self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2
+        intermediate_val -= constants.SMELLY_ITEMS_DETERIORATION_RATE * self.SELL_DAYS % 2
+        self._inner_run(self.SELL_DAYS % 2, intermediate_val)
+
+        # Below 0 sell days
+        self._inner_run(time_to_run, intermediate_val - time_to_run * constants.SMELLY_ITEMS_DETERIORATION_RATE * constants.ITEM_OVERDUE_FACTOR)
+
+    def test_boundaries_smelly_items(self):
+        run_time = self.ITEM_QUALITY
+        self._inner_run(run_time, 0)
+
+    # TODO end to end/ blackbox tests?
 if __name__ == '__main__':
     unittest.main()
