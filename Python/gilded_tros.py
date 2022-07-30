@@ -73,9 +73,10 @@ class ItemWrapper(Item, ABC):
     def update_quality(self, days: int = 1) -> None:
         pass
 
-    @abstractmethod
     def _check_item_constraints(self):
-        pass
+        if not ItemWrapper.QUALITY_LOWER_BOUND < self.quality < ItemWrapper.QUALITY_UPPER_BOUND:
+            raise ValueError(f'Item Quality bounds not respected: = {self.quality}\n must be between '
+                             f'({ItemWrapper.QUALITY_LOWER_BOUND},{ItemWrapper.QUALITY_UPPER_BOUND}')
 
 
 class _RegularItemWrapper(ItemWrapper, ABC):
@@ -83,15 +84,9 @@ class _RegularItemWrapper(ItemWrapper, ABC):
     def update_quality(self, days: int = 1) -> None:
         pass
 
-    def _check_item_constraints(self) -> None:
-        pass
-
 
 class _GoodWineItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
-        pass
-
-    def _check_item_constraints(self) -> None:
         pass
 
 
@@ -102,7 +97,8 @@ class _LegendaryItemWrapper(ItemWrapper):
         pass
 
     def _check_item_constraints(self) -> None:
-        pass
+        if not self.quality == _LegendaryItemWrapper.ITEM_QUALITY:
+            raise ValueError(f'Legendary items always have a quality of {self.ITEM_QUALITY} now {self.quality}')
 
 
 class _BackstageItemWrapper(ItemWrapper):
