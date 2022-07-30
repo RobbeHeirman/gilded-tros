@@ -78,8 +78,8 @@ class ItemWrapper(ABC):
         self._item = item
         self._check_item_constraints()
 
-    def __repr__(self):
-        return self._item.__repr__()
+    # def __repr__(self):
+    #     return self._item.__repr__()
 
     @property
     def name(self):
@@ -145,7 +145,12 @@ class _LegendaryItemWrapper(ItemWrapper):
     ITEM_QUALITY = 80
 
     def update_quality(self, days: int = 1) -> None:
-        pass
+        """
+        A legendary item doesn't update his quality.
+        :param days: amount of days we progress. Defaults to 1
+        """
+
+        self._item.sell_in -= days
 
     def _check_item_constraints(self) -> None:
         if not self._item.quality == _LegendaryItemWrapper.ITEM_QUALITY:
@@ -161,7 +166,16 @@ class _BackstageItemWrapper(ItemWrapper):
     }
 
     def update_quality(self, days: int = 1) -> None:
-        pass
+        """
+        The interesting one. Backstage passes have different quality rates based on how close they are to the
+        sell in day.
+        :param days: amount of days we progress. Defaults to 1
+        :return:
+        """
+
+        # Need to know day out of the highest key => No deterioration?
+        highest_treshold = sorted(self.__class__.QUALITY_THRESHOLDS.keys(), key=lambda x: x * -1)
+        # For every treshold point deteriorates more quickly
 
     def _check_item_constraints(self) -> None:
         pass
@@ -193,9 +207,9 @@ def item_wrapper_factory(item: Item) -> ItemWrapper:
             return _LegendaryItemWrapper(item)
         case 'Good Wine':
             return _GoodWineItemWrapper(item)
-        case 'Backstage passes for Re:Factor', 'Backstage passes for HAXX':
+        case 'Backstage passes for Re:Factor' | 'Backstage passes for HAXX':
             return _BackstageItemWrapper(item)
-        case 'Duplicate Code', 'Long Methods', 'Ugly Variable Names':
+        case 'Duplicate Code', 'Long Methods' | 'Ugly Variable Names':
             return _SmellyItemWrapper(item)
         case _:
             return _RegularItemWrapper(item)
