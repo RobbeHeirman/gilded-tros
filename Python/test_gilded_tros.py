@@ -164,14 +164,14 @@ class UpdateQualityBackstageItems(BaseUpdateQualityTest):
 
     # TODO: could be useful somewhere else?
     # TODO: this is getting to complicated in a test => signs of bad design?
-    def _get_value_rate(self, sell_days: int) -> int:
-        sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
-        prev_val = constants.ITEM_QUALITY_DETERIORATION_RATE
-        for key in sorted_boundaries_keys:
-            if key <= sell_days:
-                return prev_val
-            prev_val = constants.BACKSTAGE_QUALITY_THRESHOLDS[key]
-        return prev_val
+    # def _get_value_rate(self, sell_days: int) -> int:
+    #     sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
+    #     prev_val = constants.ITEM_QUALITY_DETERIORATION_RATE
+    #     for key in sorted_boundaries_keys:
+    #         if key <= sell_days:
+    #             return prev_val
+    #         prev_val = constants.BACKSTAGE_QUALITY_THRESHOLDS[key]
+    #     return prev_val
 
     def test_backstage_happy_day(self):
         sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
@@ -186,7 +186,8 @@ class UpdateQualityBackstageItems(BaseUpdateQualityTest):
         intervals = [abs(j - i) for i, j in zip(sorted_boundaries_keys[:-1], sorted_boundaries_keys[1:])]
         # TODO: Improve this bisect func could be useful
         for i, interval in enumerate(intervals):
-            self._inner_run(interval, value_now + interval * constants.BACKSTAGE_QUALITY_THRESHOLDS[sorted_boundaries_keys[i]])
+            self._inner_run(interval,
+                            value_now + interval * constants.BACKSTAGE_QUALITY_THRESHOLDS[sorted_boundaries_keys[i]])
 
 
 class UpdateQualitySmellyItems(BaseUpdateQualityTest):
@@ -198,20 +199,25 @@ class UpdateQualitySmellyItems(BaseUpdateQualityTest):
     def test_smelly_happy_day(self):
         time_to_run = self.SELL_DAYS // 2
         # 200  - 2 * 15 = 170,
-        self._inner_run(time_to_run, self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run)
+        self._inner_run(time_to_run,
+                        self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run)
         # 140
-        self._inner_run(time_to_run, self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2)
+        self._inner_run(time_to_run,
+                        self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2)
         intermediate_val = self.STARTING_ITEM_QUALITY - constants.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2
         intermediate_val -= constants.SMELLY_ITEMS_DETERIORATION_RATE * self.SELL_DAYS % 2
         self._inner_run(self.SELL_DAYS % 2, intermediate_val)
 
         # Below 0 sell days
-        self._inner_run(time_to_run, intermediate_val - time_to_run * constants.SMELLY_ITEMS_DETERIORATION_RATE * constants.ITEM_OVERDUE_FACTOR)
+        intermediate_val -= time_to_run * constants.SMELLY_ITEMS_DETERIORATION_RATE * constants.ITEM_OVERDUE_FACTOR
+        self._inner_run(time_to_run, intermediate_val)
 
     def test_boundaries_smelly_items(self):
         run_time = self.ITEM_QUALITY
         self._inner_run(run_time, 0)
 
     # TODO end to end/ blackbox tests?
+
+
 if __name__ == '__main__':
     unittest.main()
