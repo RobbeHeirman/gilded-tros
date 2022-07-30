@@ -84,7 +84,7 @@ class ItemWrapper(ABC):
     @abstractmethod
     def update_quality(self, days: int = 1) -> None:
         """
-        Subclasses must implement update_quality. Updates the quality and amount of sell in days on an item.
+        Updates the quality and amount of sell in days on an item.
         :param days: the amount of days we want to update for. Defaults to 1
         :return: None
         """
@@ -155,7 +155,7 @@ class _BackstageItemWrapper(ItemWrapper):
         The interesting one. Backstage passes have different quality rates based on how close they are to the
         sell in day.
         :param days: amount of days we progress. Defaults to 1
-        :return:
+        :return: None
         """
 
         # Let's save where we started from
@@ -189,7 +189,11 @@ class _SmellyItemWrapper(ItemWrapper):
     DETERIORATION_RATE = 2 * ItemWrapper.QUALITY_DETERIORATION_RATE
 
     def update_quality(self, days: int = 1) -> None:
-
+        """
+        As a regular item but deteriorates faster.
+        :param days: amount of days we progress. Defaults to 1
+        :return: None
+        """
         deter = _regular_deterioration(days, self.sell_in, self.DETERIORATION_RATE, self.OVERDUE_FACTOR)
         new_val = self.quality - deter
 
