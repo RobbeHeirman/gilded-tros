@@ -135,6 +135,10 @@ class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
         interval_increase = run_range * constants.ITEM_QUALITY_DETERIORATION_RATE
         self._inner_run(run_range, self.STARTING_ITEM_QUALITY + interval_increase)
 
+    def test_invariant_item_boundaries(self):
+        run_range = constants.ITEM_QUALITY_UPPER_BOUND - self.STARTING_ITEM_QUALITY + 1
+        self._inner_run(run_range, constants.ITEM_QUALITY_UPPER_BOUND)
+
 
 class UpdateQualityLegendaryItems(unittest.TestCase):
 
@@ -148,11 +152,11 @@ class UpdateQualityLegendaryItems(unittest.TestCase):
             self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
 
-class UpdateQualitySmellyItems(unittest.TestCase):
+class UpdateQualityBackstageItems(unittest.TestCase):
     pass
 
 
-class UpdateQualityBackstageItems(unittest.TestCase):
+class UpdateQualitySmellyItems(unittest.TestCase):
     pass
 
 
