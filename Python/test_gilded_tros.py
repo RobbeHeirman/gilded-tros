@@ -113,7 +113,7 @@ class UpdateQualityRegularTest(BaseUpdateQualityTest):
     def test_update_quality_happy_day(self):
         run_range = self.SELL_DAYS // 2
 
-        self._inner_run(run_range, (self.STARTING_ITEM_QUALITY - run_range) * constants.ITEM_QUALITY_DETERIORATION_RATE)
+        self._inner_run(run_range, self.STARTING_ITEM_QUALITY - (run_range * constants.ITEM_QUALITY_DETERIORATION_RATE))
         self._inner_run(run_range, (self.STARTING_ITEM_QUALITY - (
                 2 * run_range + self.SELL_DAYS % 2)) * constants.ITEM_QUALITY_DETERIORATION_RATE)
         self._inner_run(1, self.STARTING_ITEM_QUALITY - self.SELL_DAYS - constants.ITEM_OVERDUE_FACTOR)
@@ -128,8 +128,13 @@ class UpdateQualityRegularTest(BaseUpdateQualityTest):
 class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.good_wine = _item_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY_QUALITY)
+        self.good_wine = _item_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
 
+    def test_update_quality_happy_day(self):
+        run_range = self.SELL_DAYS // 2
+        self._inner_run(run_range, self.STARTING_ITEM_QUALITY + (run_range * constants.ITEM_QUALITY_DETERIORATION_RATE))
+        self._inner_run(run_range, self.STARTING_ITEM_QUALITY + (run_range * 2 * constants.ITEM_QUALITY_DETERIORATION_RATE))
+        self._inner_run(run_range, s)
 
 class UpdateQualityLegendaryItems(unittest.TestCase):
 

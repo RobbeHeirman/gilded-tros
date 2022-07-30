@@ -14,3 +14,11 @@
 4) write tests and tests and some more tests.
 3) Write some code! (heavy breathing)
 4) profit?
+
+
+======
+Ideas popped in my head:
+    - Use wrapper/decorator pattern to encapsulate item and extend functionality
+    - Use polymorphic wrapper classes to extend functions and implement boundary functions
+        ->Note: Composite with functions could also work but more verbose for boundaries imo
+    - Item factory becomes itemwrapper factory
