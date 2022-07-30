@@ -52,12 +52,17 @@ class Item:
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
 
 
-
 class ItemWrapper(Item, ABC):
     """
     Wrap old item class to extend the functionality.
     Each implementation class of the ItemWrapper will need implement update_quality(days=1).
     """
+
+    # Constants should be in a settings file.
+    QUALITY_LOWER_BOUND = 0
+    QUALITY_UPPER_BOUND = 50
+    QUALITY_DETERIORATION_RATE = 1
+    OVERDUE_FACTOR = 2
 
     def __init__(self, item: Item):
         super().__init__(item.name, item.sell_in, item.quality)
@@ -65,20 +70,22 @@ class ItemWrapper(Item, ABC):
         self._check_item_constraints()
 
     @abstractmethod
-    def update_quality(self, days: int=1) -> None:
+    def update_quality(self, days: int = 1) -> None:
         pass
 
     @abstractmethod
     def _check_item_constraints(self):
         pass
 
+
 class _RegularItemWrapper(ItemWrapper, ABC):
 
-    def update_quality(self, days: int=1) -> None:
+    def update_quality(self, days: int = 1) -> None:
         pass
 
-    def _check_item_constraints(self)-> None:
+    def _check_item_constraints(self) -> None:
         pass
+
 
 class _GoodWineItemWrapper(ItemWrapper):
     def update_quality(self, days: int = 1) -> None:
@@ -87,21 +94,35 @@ class _GoodWineItemWrapper(ItemWrapper):
     def _check_item_constraints(self) -> None:
         pass
 
+
 class _LegendaryItemWrapper(ItemWrapper):
+    ITEM_QUALITY = 80
+
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
+
 
 class _BackstageItemWrapper(ItemWrapper):
+    QUALITY_THRESHOLDS = {
+        10.0: 1 * ItemWrapper.QUALITY_DETERIORATION_RATE,
+        5.0: 3 * ItemWrapper.QUALITY_DETERIORATION_RATE,
+        -1: 0 * ItemWrapper.QUALITY_DETERIORATION_RATE
+
+    }
+
     def update_quality(self, days: int = 1) -> None:
         pass
 
     def _check_item_constraints(self) -> None:
         pass
+
 
 class _SmellyItemWrapper(ItemWrapper):
+    SMELLY_ITEMS_DETERIORATION_RATE = 2 * ItemWrapper.QUALITY_DETERIORATION_RATE
+
     def update_quality(self, days: int = 1) -> None:
         pass
 
@@ -109,5 +130,9 @@ class _SmellyItemWrapper(ItemWrapper):
         pass
 
 
-def item_factory(item: Item):
-    pass
+def item_wrapper_factory(item: Item) -> ItemWrapper:
+    # Not a fan of hard coding and deferring types by name.
+    # Could also explicitly define all items?
+    match item.name:
+
+        case _: return _RegularItemWrapper(item)
