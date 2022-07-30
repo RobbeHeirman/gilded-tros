@@ -61,7 +61,6 @@ class ItemConstructorTest(unittest.TestCase):
             item = item_factory(test_name, 0, constants.LEGENDARY_ITEM_QUALITY)
             self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
 
-    # TODO: Constructor boundary tests.
     def test_item_boundaries(self):
         test_names = _regular_quality_item_names()
         # Value lower boundary upper boundary
@@ -99,7 +98,7 @@ class BaseUpdateQualityTest(unittest.TestCase):
     STARTING_ITEM_QUALITY = 45
 
     def _inner_run(self, run_time, equals):
-        for _ in range(run_time):
+        for _ in range(int(run_time)):
             self.driver.update_quality()
         for item in self.items:
             self.assertEqual(item.quality, equals)
@@ -156,8 +155,35 @@ class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
         self._inner_run(run_range, constants.LEGENDARY_ITEM_QUALITY)
 
 
-class UpdateQualityBackstageItems(unittest.TestCase):
-    pass
+class UpdateQualityBackstageItems(BaseUpdateQualityTest):
+    def setUp(self) -> None:
+        self.items = _item_generator(_BACKSTAGE_PASSES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.driver = GildedTros(self.items)
+
+    # TODO: could be useful somewhere else?
+    # TODO: this is getting to complicated in a test => signs of bad design?
+    def _get_value_rate(self, sell_days: int) -> int:
+        sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
+        prev_val = constants.ITEM_QUALITY_DETERIORATION_RATE
+        for key in sorted_boundaries_keys:
+            if key <= sell_days:
+                return prev_val
+            prev_val = constants.BACKSTAGE_QUALITY_THRESHOLDS[key]
+        return prev_val
+
+    def test_backstage_happy_day(self):
+        sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
+        self.assertGreater(self.SELL_DAYS, sorted_boundaries_keys[0],
+                           f'invalid test setup. start sell days ({self.SELL_DAYS}) should be bigger then the biggest'
+                           f'sell boundary ({sorted_boundaries_keys[0]})')
+
+        time_ro_run = self.SELL_DAYS - sorted_boundaries_keys[0]
+        value_rate = constants.ITEM_QUALITY_DETERIORATION_RATE
+        value_now = self.STARTING_ITEM_QUALITY + value_rate
+        self._inner_run(time_ro_run, value_now)
+        intervals = [abs(j - i) for i, j in zip(sorted_boundaries_keys[:-1], sorted_boundaries_keys[1:])]
+        for i, interval in enumerate(intervals):
+            self._inner_run(interval, value_now + interval * constants.BACKSTAGE_QUALITY_THRESHOLDS[sorted_boundaries_keys[i]])
 
 
 class UpdateQualitySmellyItems(unittest.TestCase):
