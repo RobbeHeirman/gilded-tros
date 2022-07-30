@@ -11,5 +11,5 @@ Instructions can be found in the GildedTrosRequirements document.
 
 Have fun and good luck!
 
-## Edits Robbe:
-Solved in python 3.10.
+## Notes Robbe:
+Solved with python 3.10.
