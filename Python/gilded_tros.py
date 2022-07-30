@@ -215,5 +215,3 @@ def item_wrapper_factory(item: Item) -> ItemWrapper:
             return _SmellyItemWrapper(item)
         case _:
             return _RegularItemWrapper(item)
-
-
