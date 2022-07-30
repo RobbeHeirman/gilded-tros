@@ -4,6 +4,7 @@ import unittest
 
 from gilded_tros import Item, GildedTros, item_wrapper_factory, ItemWrapper, _LegendaryItemWrapper, _SmellyItemWrapper, \
     _BackstageItemWrapper
+
 # TODO documentation
 
 _ITEM_NAMES = (
@@ -107,7 +108,7 @@ class BaseUpdateQualityTest(unittest.TestCase):
         for _ in range(int(run_time)):
             self.driver.update_quality()
         for item in self.items:
-            self.assertEqual(item.quality, equals)
+            self.assertEqual(equals, item.quality)
 
 
 class UpdateQualityRegularTest(BaseUpdateQualityTest):
@@ -162,20 +163,11 @@ class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
 
 
 class UpdateQualityBackstageItems(BaseUpdateQualityTest):
+    STARTING_ITEM_QUALITY = 1
+
     def setUp(self) -> None:
         self.items = _item_generator(_BACKSTAGE_PASSES, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
         self.driver = GildedTros(self.items)
-
-    # TODO: could be useful somewhere else?
-    # TODO: this is getting to complicated in a test => signs of bad design?
-    # def _get_value_rate(self, sell_days: int) -> int:
-    #     sorted_boundaries_keys = sorted(constants.BACKSTAGE_QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
-    #     prev_val = constants.ITEM.QUALITY_DETERIORATION_RATE
-    #     for key in sorted_boundaries_keys:
-    #         if key <= sell_days:
-    #             return prev_val
-    #         prev_val = constants.BACKSTAGE_QUALITY_THRESHOLDS[key]
-    #     return prev_val
 
     def test_backstage_happy_day(self):
         sorted_boundaries_keys = sorted(_BackstageItemWrapper.QUALITY_THRESHOLDS.keys(), key=lambda x: x * - 1)
@@ -183,15 +175,14 @@ class UpdateQualityBackstageItems(BaseUpdateQualityTest):
                            f'invalid test setup. start sell days ({self.SELL_DAYS}) should be bigger then the biggest'
                            f'sell boundary ({sorted_boundaries_keys[0]})')
 
-        time_ro_run = self.SELL_DAYS - sorted_boundaries_keys[0]
+        time_ro_run = self.SELL_DAYS - sorted_boundaries_keys[0] - 1
         value_rate = ItemWrapper.QUALITY_DETERIORATION_RATE
-        value_now = self.STARTING_ITEM_QUALITY + value_rate
+        value_now = self.STARTING_ITEM_QUALITY + value_rate * time_ro_run
         self._inner_run(time_ro_run, value_now)
-        intervals = [abs(j - i) for i, j in zip(sorted_boundaries_keys[:-1], sorted_boundaries_keys[1:])]
-        # TODO: Improve this bisect func could be useful
-        for i, interval in enumerate(intervals):
-            self._inner_run(interval,
-                            value_now + interval * _BackstageItemWrapper.QUALITY_THRESHOLDS[sorted_boundaries_keys[i]])
+        value_now = value_now + _BackstageItemWrapper.QUALITY_THRESHOLDS[10] * 5
+        self._inner_run(5, value_now)
+        self._inner_run(6, value_now + _BackstageItemWrapper.QUALITY_THRESHOLDS[5] * 6)
+        self._inner_run(1, 0)
 
 
 class UpdateQualitySmellyItems(BaseUpdateQualityTest):

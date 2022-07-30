@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # TODO: What is the purpose of this class?
+import bisect
 from abc import ABC, abstractmethod
 
 
@@ -159,10 +160,8 @@ class _LegendaryItemWrapper(ItemWrapper):
 
 class _BackstageItemWrapper(ItemWrapper):
     QUALITY_THRESHOLDS = {
-        10.0: 1 * ItemWrapper.QUALITY_DETERIORATION_RATE,
-        5.0: 3 * ItemWrapper.QUALITY_DETERIORATION_RATE,
-        -1: 0 * ItemWrapper.QUALITY_DETERIORATION_RATE
-
+        10: 2 * ItemWrapper.QUALITY_DETERIORATION_RATE,
+        5:  3 * ItemWrapper.QUALITY_DETERIORATION_RATE,
     }
 
     def update_quality(self, days: int = 1) -> None:
@@ -173,12 +172,31 @@ class _BackstageItemWrapper(ItemWrapper):
         :return:
         """
 
-        # Need to know day out of the highest key => No deterioration?
-        highest_treshold = sorted(self.__class__.QUALITY_THRESHOLDS.keys(), key=lambda x: x * -1)
-        # For every treshold point deteriorates more quickly
+        # Let's save where we started from
+        original_days = self._item.sell_in
+        original_quality = self._item.quality
 
-    def _check_item_constraints(self) -> None:
-        pass
+        self._item.sell_in -= days
+
+        # After the conference :(
+        # Interpreted as still holds value on the day of the conference.
+        if original_days - days < 0:
+            self._item.quality = 0
+            return
+
+        keys = sorted(self.__class__.QUALITY_THRESHOLDS.keys())
+        for day in range(1, days + 1):
+            day_at = original_days - day
+            # Bisect returns where on the left side we will need to insert the element to keep the list sorted.
+            # Then it also holds true in what interval our number falls.
+            key_index = bisect.bisect_left(keys, day_at)
+            if key_index < len(keys):
+                original_quality += self.__class__.QUALITY_THRESHOLDS[keys[key_index]]
+            else:
+                # print(original_quality)
+                original_quality += self.__class__.QUALITY_DETERIORATION_RATE
+
+            self._item.quality = min(self.__class__.QUALITY_UPPER_BOUND, original_quality)
 
 
 class _SmellyItemWrapper(ItemWrapper):
