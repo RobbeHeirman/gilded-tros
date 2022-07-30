@@ -66,9 +66,6 @@ class ItemWrapper(ABC):
         self._item = item
         self._check_item_constraints()
 
-    # def __repr__(self):
-    #     return self._item.__repr__()
-
     @property
     def name(self):
         return self._item.name
@@ -176,10 +173,12 @@ class _BackstageItemWrapper(ItemWrapper):
             # Bisect returns where on the left side we will need to insert the element to keep the list sorted.
             # Then it also holds true in what interval our number falls.
             key_index = bisect.bisect_left(keys, day_at)
+            # print(key_index)
+            # print(keys)
             if key_index < len(keys):
                 original_quality += self.__class__.QUALITY_THRESHOLDS[keys[key_index]]
+
             else:
-                # print(original_quality)
                 original_quality += self.__class__.QUALITY_DETERIORATION_RATE
 
             self._item.quality = min(self.__class__.QUALITY_UPPER_BOUND, original_quality)
@@ -219,3 +218,5 @@ def item_wrapper_factory(item: Item) -> ItemWrapper:
             return _SmellyItemWrapper(item)
         case _:
             return _RegularItemWrapper(item)
+
+

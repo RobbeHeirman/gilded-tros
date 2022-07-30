@@ -5,8 +5,6 @@ import unittest
 from gilded_tros import Item, GildedTros, item_wrapper_factory, ItemWrapper, _LegendaryItemWrapper, _SmellyItemWrapper
 from gilded_tros import _BackstageItemWrapper
 
-# TODO documentation
-
 _ITEM_NAMES = (
     "Ring of Cleansening Code",
     "Elixir of the SOLID",
