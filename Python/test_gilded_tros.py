@@ -128,7 +128,8 @@ class UpdateQualityRegularTest(BaseUpdateQualityTest):
 class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.good_wine = _item_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.items = _item_generator(_GOOD_WINE, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.driver = GildedTros(self.items)
 
     def test_update_quality_happy_day(self):
         run_range = constants.ITEM_QUALITY_UPPER_BOUND - self.STARTING_ITEM_QUALITY
@@ -140,16 +141,19 @@ class UpdateQualityGoodWineTest(BaseUpdateQualityTest):
         self._inner_run(run_range, constants.ITEM_QUALITY_UPPER_BOUND)
 
 
-class UpdateQualityLegendaryItems(unittest.TestCase):
+class UpdateQualityLegendaryItems(BaseUpdateQualityTest):
 
     def setUp(self) -> None:
-        self.sell_days = 30
-        self.starting_item_quality = 45
-        self.legendary_items = _item_generator(_LEGENDARY_ITEMS, self.sell_days, self.starting_item_quality)
+        self.items = _item_generator(_LEGENDARY_ITEMS, self.SELL_DAYS, self.STARTING_ITEM_QUALITY)
+        self.driver = GildedTros(self.items)
 
-    def test_invariant_legendary_item(self):
-        for item in self.legendary_items:
-            self.assertEqual(item.quality, constants.LEGENDARY_ITEM_QUALITY)
+    def test_update_quality_happy_day(self):
+        run_range = self.SELL_DAYS // 2
+        self._inner_run(run_range, constants.LEGENDARY_ITEM_QUALITY)
+
+    def test_invariant_legendary_item_boundaries(self):
+        run_range = self.SELL_DAYS * 2
+        self._inner_run(run_range, constants.LEGENDARY_ITEM_QUALITY)
 
 
 class UpdateQualityBackstageItems(unittest.TestCase):
