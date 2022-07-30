@@ -50,7 +50,6 @@ def _regular_deterioration(days: int, start_days, factor: float, overdue_factor:
     positive_days = days - negative_days
     positive_reduction = positive_days * factor
     negative_reduction = negative_days * factor * overdue_factor
-    # print(negative_reduction)
     return positive_reduction + negative_reduction
 
 
