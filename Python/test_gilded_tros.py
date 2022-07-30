@@ -2,8 +2,8 @@
 import itertools
 import unittest
 
-from gilded_tros import Item, GildedTros, item_wrapper_factory, ItemWrapper, _LegendaryItemWrapper, _SmellyItemWrapper, \
-    _BackstageItemWrapper
+from gilded_tros import Item, GildedTros, item_wrapper_factory, ItemWrapper, _LegendaryItemWrapper, _SmellyItemWrapper
+from gilded_tros import _BackstageItemWrapper
 
 # TODO documentation
 
@@ -195,16 +195,16 @@ class UpdateQualitySmellyItems(BaseUpdateQualityTest):
         time_to_run = self.SELL_DAYS // 2
         # 200  - 2 * 15 = 170,
         self._inner_run(time_to_run,
-                        self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run)
+                        self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run)
         # 140
         self._inner_run(time_to_run,
-                        self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2)
-        intermediate_val = self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.SMELLY_ITEMS_DETERIORATION_RATE * time_to_run * 2
-        intermediate_val -= _SmellyItemWrapper.SMELLY_ITEMS_DETERIORATION_RATE * self.SELL_DAYS % 2
+                        self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run * 2)
+        intermediate_val = self.STARTING_ITEM_QUALITY - _SmellyItemWrapper.DETERIORATION_RATE * time_to_run * 2
+        intermediate_val -= _SmellyItemWrapper.DETERIORATION_RATE * self.SELL_DAYS % 2
         self._inner_run(self.SELL_DAYS % 2, intermediate_val)
 
         # Below 0 sell days
-        intermediate_val -= time_to_run * _SmellyItemWrapper.SMELLY_ITEMS_DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
+        intermediate_val -= time_to_run * _SmellyItemWrapper.DETERIORATION_RATE * ItemWrapper.OVERDUE_FACTOR
         self._inner_run(time_to_run, intermediate_val)
 
     def test_boundaries_smelly_items(self):

@@ -9,6 +9,7 @@ class GildedTros(object):
 
     def __init__(self, items):
         self.items = items
+        # for sake of argument let's assume we can't assign the wrapper items to self.items
         self._wrapped_items = [item_wrapper_factory(item) for item in items]
 
     def update_quality(self, days: int = 1) -> None:
@@ -19,37 +20,6 @@ class GildedTros(object):
         """
         for wrap_item in self._wrapped_items:
             wrap_item.update_quality(days)
-
-        # TODO: quite alot
-        # for item in self.items:
-        #     if item.name != "Good Wine" and item.name != "Backstage passes for Re:Factor" \
-        #             and item.name != "Backstage passes for HAXX":
-        #         if item.quality > 0:
-        #             if item.name != "B-DAWG Keychain":
-        #                 item.quality = item.quality - 1
-        #     else:
-        #         if item.quality < 50:
-        #             item.quality = item.quality + 1
-        #             if item.name == "Backstage passes for Re:Factor" or item.name == "Backstage passes for HAXX":
-        #                 if item.sell_in < 11:
-        #                     if item.quality < 50:
-        #                         item.quality = item.quality + 1
-        #                 if item.sell_in < 6:
-        #                     if item.quality < 50:
-        #                         item.quality = item.quality + 1
-        #     if item.name != "B-DAWG Keychain":
-        #         item.sell_in = item.sell_in - 1
-        #     if item.sell_in < 0:
-        #         if item.name != "Good Wine":
-        #             if item.name != "Backstage passes for Re:Factor" and item.name != "Backstage passes for HAXX":
-        #                 if item.quality > 0:
-        #                     if item.name != "B-DAWG Keychain":
-        #                         item.quality = item.quality - 1
-        #             else:
-        #                 item.quality = item.quality - item.quality
-        #         else:
-        #             if item.quality < 50:
-        #                 item.quality = item.quality + 1
 
 
 class Item:
@@ -216,10 +186,15 @@ class _BackstageItemWrapper(ItemWrapper):
 
 
 class _SmellyItemWrapper(ItemWrapper):
-    SMELLY_ITEMS_DETERIORATION_RATE = 2 * ItemWrapper.QUALITY_DETERIORATION_RATE
+    DETERIORATION_RATE = 2 * ItemWrapper.QUALITY_DETERIORATION_RATE
 
     def update_quality(self, days: int = 1) -> None:
-        pass
+
+        deter = _regular_deterioration(days, self.sell_in, self.DETERIORATION_RATE, self.OVERDUE_FACTOR)
+        new_val = self.quality - deter
+
+        self._item.sell_in -= days
+        self._item.quality = max((self.QUALITY_LOWER_BOUND, new_val))
 
 
 def item_wrapper_factory(item: Item) -> ItemWrapper:
