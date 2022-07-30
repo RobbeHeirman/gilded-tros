@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 # TODO: What is the purpose of this class?
+from abc import ABC, abstractmethod
+
+
 class GildedTros(object):
 
     def __init__(self, items):
@@ -51,4 +54,19 @@ class Item:
 
 def item_factory(name, sell_in, quality):
     # TODO: needs to be implemented
-    return Item(name, sell_in , quality)
+    return Item(name, sell_in, quality)
+
+
+class ItemWrapper(Item, ABC):
+    """
+    Wrap old item class to extend the functionality.
+    Each implementation class of the ItemWrapper will need implement update_quality(days=1).
+    """
+
+    def __init__(self, item: Item):
+        super().__init__(item.name, item.sell_in, item.quality)
+        self._item = item
+
+    @abstractmethod
+    def update_quality(self, days: int=1):
+        pass
