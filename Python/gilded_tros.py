@@ -66,7 +66,48 @@ class ItemWrapper(Item, ABC):
     def __init__(self, item: Item):
         super().__init__(item.name, item.sell_in, item.quality)
         self._item = item
+        self._check_item_constraints()
 
     @abstractmethod
-    def update_quality(self, days: int=1):
+    def update_quality(self, days: int=1) -> None:
+        pass
+
+    @abstractmethod
+    def _check_item_constraints(self):
+        pass
+
+class RegularItemWrapper(ItemWrapper, ABC):
+
+    def update_quality(self, days: int=1) -> None:
+        pass
+
+    def _check_item_constraints(self)-> None:
+        pass
+
+class GoodWineItemWrapper(ItemWrapper, ABC):
+    def update_quality(self, days: int = 1) -> None:
+        pass
+
+    def _check_item_constraints(self) -> None:
+        pass
+
+class LegendaryItemWrapper(ItemWrapper, ABC):
+    def update_quality(self, days: int = 1) -> None:
+        pass
+
+    def _check_item_constraints(self) -> None:
+        pass
+
+class BackstageItemWrapper(ItemWrapper, ABC):
+    def update_quality(self, days: int = 1) -> None:
+        pass
+
+    def _check_item_constraints(self) -> None:
+        pass
+
+class SmellyItemWrapper(ItemWrapper, ABC):
+    def update_quality(self, days: int = 1) -> None:
+        pass
+
+    def _check_item_constraints(self) -> None:
         pass
